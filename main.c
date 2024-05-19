@@ -14,7 +14,7 @@ Node* newNode(char* s){
     char* st = malloc(strlen(s)+1);
     strcpy(st, s);
     n->word = st; n->left = n->right = NULL;
-    n->h = 0;
+    n->h =n->b = 0;
     return n;
 }
 Node* insert(Node *n, char *s){
@@ -35,12 +35,17 @@ Node* insert(Node *n, char *s){
             n->right = ne;
         }
     }
-    if(n->right && !n->left)
-        n->h = n->right->h+1;
-    else if (!n->right && n->left)
-        n->h = n->left->h+1;
+    if(n->right && !n->left) {
+        n->h = n->right->h + 1;
+        n->b = -n->right->h;
+    }
+    else if (!n->right && n->left) {
+        n->h = n->left->h + 1;
+        n->b = n->left->h;
+    }
     else {
         n->h = (n->left->h > n->right->h?n->left->h:n->right->h)+1;
+        n->b = n->left->h - n->right->h;
     }
     return n;
 }
@@ -135,9 +140,9 @@ int main() {
         //printf("%s", s);
         insert(n, s);
     }
-    printf("%s, %s, %s\n", search(n, d)->word, successor(n, d)->word, predecessor(n, d)->word);
+    //printf("%s, %s, %s\n", search(n, d)->word, successor(n, d)->word, predecessor(n, d)->word);
     //printTree(n);
-    printf("%d, %d", n->h, i);
+    printf("%d, %d", n->h, n->b);
     fclose(f);
 
 
