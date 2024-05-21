@@ -4,7 +4,6 @@
 typedef struct Node Node;
 struct Node{
     int h;
-    int b;
     char* word;
     Node* left;
     Node* right;
@@ -14,7 +13,7 @@ Node* newNode(char* s){
     char* st = malloc(strlen(s)+1);
     strcpy(st, s);
     n->word = st; n->left = n->right = NULL;
-    n->h =n->b = 0;
+    n->h = 0;
     return n;
 }
 Node* insert(Node *n, char *s){
@@ -37,15 +36,12 @@ Node* insert(Node *n, char *s){
     }
     if(n->right && !n->left) {
         n->h = n->right->h + 1;
-        n->b = -n->right->h;
     }
     else if (!n->right && n->left) {
         n->h = n->left->h + 1;
-        n->b = n->left->h;
     }
     else {
         n->h = (n->left->h > n->right->h?n->left->h:n->right->h)+1;
-        n->b = n->left->h - n->right->h;
     }
     return n;
 }
@@ -125,26 +121,67 @@ Node* predecessor(Node* n, char*s)
     else
         return predecessor(n->left, s);
 }
-
-
-int main() {
+Node* Load(char *File)
+{
     int i;
-    char*d = "boars";
     char s[101];
-    FILE *f = fopen("../words.txt", "r");
+    FILE *f = fopen(File, "r");
+    if (!f)
+    {
+        printf("File not found\n");
+        exit(1);
+    }
     fgets(s, 100, f);
     s[strlen(s)-1] = '\0';
     Node *n = newNode(s);
     for(i = 1;fgets(s, 100, f); i++){
         s[strlen(s)-1] = '\0';
-        //printf("%s", s);
         insert(n, s);
     }
-    //printf("%s, %s, %s\n", search(n, d)->word, successor(n, d)->word, predecessor(n, d)->word);
-    //printTree(n);
-    printf("%d, %d", n->h, n->b);
     fclose(f);
-
-
+    printf("Dictionary Loaded Successfully..!\n");
+    printf(".................................\n");
+    printf("Size = %d\n", i);
+    printf(".................................\n");
+    printf("Height = %d\n", n->h);
+    printf(".................................\n");
+    return n;
+}
+void destTree(Node*n)
+{
+    if (!n)
+        return;
+    destTree(n->left);
+    destTree(n->right);
+    free(n->word);
+    free(n);
+}
+int main() {
+    char s[100];
+    Node *n = Load("Dictionary.txt"), *f, *p, *S;
+    printf("Enter a sentence: \n");
+    fgets(s, 100, stdin);
+    s[strlen(s)-1] = '\0';
+    char*t = strtok(s, " ");
+    do{
+        f = search(n, t);
+        if(!strcasecmp(t, f->word))
+        {
+            printf("%s - CORRECT\n", t);
+            continue;
+        }
+        printf("%s - INCORRECT, Suggestion: %s", t, f->word);
+        if(!(p = predecessor(n, f->word))) {
+            S = successor(n, f->word);
+            printf(" %s %s\n", S->word, successor(n,S->word)->word);
+            continue;
+        }else printf(" %s", p->word);
+        if (!(S = successor(n, f->word)))
+        {
+            S = predecessor(n, p->word);
+            printf(" %s\n", S->word);
+        }else printf(" %s\n" , S->word);
+    } while ((t = strtok(NULL, " ")));
+    destTree(n);
     return 0;
 }

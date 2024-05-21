@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Spellccheck.iml" filepath="$PROJECT_DIR$/.idea/Spellccheck.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SpellCheck.iml" filepath="$PROJECT_DIR$/.idea/SpellCheck.iml" />
     </modules>
   </component>
 </project>
